@@ -19,6 +19,7 @@ def parse_anime_page(page_url, output_dir,place):
     Парсит страницу аниме и извлекает информацию.
     """
     page_filename = os.path.join(output_dir, f"{page_url.split('/')[-1]}")
+    print(page_filename,"*******************")
     save_html_to_file(page_url, page_filename)
 
     with open(page_filename, "r", encoding='utf-8') as file:
@@ -66,11 +67,12 @@ def get_data(url):
     # Получаем список ссылок на аниме
     soup = BeautifulSoup(requests.get(url, headers=headers).text, "lxml")
     movie_items = soup.find_all('div', class_='movie-item')
-    links = [base_url + item.find('a')['href'] for item in movie_items[:2]]
+    print(movie_items)
+    links = [base_url + item.find('a')['href'] for item in movie_items[23:30]]
 
     # Проходим по каждой ссылке и сохраняем информацию
     for i,link in enumerate(links):
-        parse_anime_page(link, "data",i+1)
+        parse_anime_page(link, "Data/s1",i+1)
         
 
 if __name__ == "__main__":
