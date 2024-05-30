@@ -1,6 +1,7 @@
 import os
 import requests
 from bs4 import BeautifulSoup
+import re
 
 def save_html_to_file(url, filename):
     """
@@ -19,14 +20,13 @@ def parse_anime_page(page_url, output_dir,place):
     Парсит страницу аниме и извлекает информацию.
     """
     page_filename = os.path.join(output_dir, f"{page_url.split('/')[-1]}")
-    print(page_filename,"*******************")
     save_html_to_file(page_url, page_filename)
 
     with open(page_filename, "r", encoding='utf-8') as file:
         page_content = file.read()
 
     soup = BeautifulSoup(page_content, "lxml")
-    extract_info(soup,place)
+    return extract_info(soup,place)
 
 def extract_info(soup,place):
     """
@@ -35,24 +35,39 @@ def extract_info(soup,place):
     data = dict()
 
     value = soup.select_one('.inner-page__title')
-    data["Name_ru"] = value.text.strip()
+    data["name_ru"] = value.text.strip()
 
     value = soup.select_one('.inner-page__subtitle')
-    data["Name_eng"] = value.text.strip()
+    data["name_eng"] = value.text.strip()
 
     values = soup.select('.inner-page__list li')
-    print(data["Name_ru"])
-    print(data["Name_eng"])
 
-    for value in values:
+
+    keys = ["year_of_release","time","director","rating","genres","views","status","licensed","translation"]
+    for i,value in enumerate(values):
         value = value.text.strip().split(": ")
-        data[value[0]] = value[1]
-        print(value[0],value[1])
+        # Вытаскивает из строки только текущий рейтинг аниме
+        if keys[i] == "rating":
+            value[1] = value[1].split(' / ')
+            value[1] = float(value[1][0])
+        
+        if keys[i] == "genres":
+            value[1] = value[1].split(r' •  ',)
+        
+        if keys[i] == "views":
+            value[1] = int(value[1].replace(" ", ""))
+            print(value[1])
+        if keys[i] == "licensed":
+            value[1] = value[1].split(", ")
+        
+        if keys[i] == "translation":
+            value[1] = value[1].split(", ")
+        
+        data[keys[i]] = value[1]
 
-    data["Описание"] = soup.select_one('.inner-page__text.text.clearfix').text.strip()
-    data["Место"] = place
-    print(data["Описание"])
-    print(data["Место"])
+    data["description"] = soup.select_one('.inner-page__text.text.clearfix').text.strip()
+    data["place"] = place
+    return data
     
 
 def get_data(url):
@@ -67,13 +82,11 @@ def get_data(url):
     # Получаем список ссылок на аниме
     soup = BeautifulSoup(requests.get(url, headers=headers).text, "lxml")
     movie_items = soup.find_all('div', class_='movie-item')
-    print(movie_items)
-    links = [base_url + item.find('a')['href'] for item in movie_items[23:30]]
+    links = [base_url + item.find('a')['href'] for item in movie_items[0:1]]
 
     # Проходим по каждой ссылке и сохраняем информацию
+    data = list()
     for i,link in enumerate(links):
-        parse_anime_page(link, "Data/s1",i+1)
-        
-
-if __name__ == "__main__":
-    get_data("https://yummyanime.tv/2top-100/")
+        data.append(parse_anime_page(link, "Data/s1",i+1))
+    
+    return data
