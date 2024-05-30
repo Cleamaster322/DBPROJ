@@ -24,17 +24,17 @@ DROP TABLE IF EXISTS `anime`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `anime` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name_ru` varchar(100) DEFAULT NULL,
-  `name_eng` varchar(100) DEFAULT NULL,
+  `name_ru` varchar(500) DEFAULT NULL,
+  `name_eng` varchar(500) DEFAULT NULL,
   `year_of_release` varchar(50) DEFAULT NULL,
   `description` varchar(5000) DEFAULT NULL,
-  `director` varchar(100) DEFAULT NULL,
+  `director` varchar(200) DEFAULT NULL,
   `rating` float DEFAULT NULL,
   `views` int DEFAULT NULL,
   `status` varchar(50) DEFAULT NULL,
-  `img` varchar(200) DEFAULT NULL,
+  `img` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -55,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-30 13:32:53
+-- Dump completed on 2024-05-30 17:59:49
