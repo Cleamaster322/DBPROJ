@@ -37,7 +37,7 @@ def extract_info(soup,place):
 
     # Название Аниме
     header = soup.find("div", class_="page__header-one d-flex ai-center p-relative")
-    data["name_ru"] = header.find("h1").get_text()
+    data["name_ru"] = header.find("h1").get_text().replace(":",".")
     data["name_eng"] = None
     
     # Название Категории
@@ -130,7 +130,7 @@ def get_data(url):
     articles = sect_content.find_all("article", class_="card has-expanded-link p-relative grid-item")
 
     # Извлекаем ссылки из тегов <a> внутри каждого article
-    links = [article.find("a", class_="card__link has-expanded-link__trg")['href'] for article in articles[0:1]]
+    links = [article.find("a", class_="card__link has-expanded-link__trg")['href'] for article in articles]
     
     # Печатаем ссылки
     # Проходим по каждой ссылке и сохраняем информацию

@@ -78,7 +78,7 @@ def extract_info(soup,place):
     # Извлекаем обложку
 
     new_filename = f"{data["name_ru"].replace("/","_").replace("?","")}.jpg"
-    target_dir ="img/s2"
+    target_dir ="img"
     file_path = join(target_dir, new_filename)
 
 
@@ -122,7 +122,7 @@ def get_data(url):
     main_element = soup.find("main")
     anime_links = main_element.find_all("a", class_="updli")
     # Извлекаем href из каждой ссылки
-    links = [link['href'] for link in anime_links[49:50]]
+    links = [link['href'] for link in anime_links]
     # Печатаем ссылки
     # Проходим по каждой ссылке и сохраняем информацию
     data = list()

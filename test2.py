@@ -1,8 +1,7 @@
-a = (1)
-a = (a,)
-b = (a[0],2,)
-print(a)
-print(type(a))
+table_name = "anime"
+column_name = "name_ru"
 
-a = "123"
-a.split
+query = f"SELECT COUNT(*) FROM {table_name} WHERE {column_name} = like (%s%) and year_of_release = %s"
+value = ("Семь смертных грехов",)
+
+print(query)

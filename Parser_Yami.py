@@ -96,21 +96,20 @@ def extract_info(soup,place):
     data["description"] = soup.select_one('.inner-page__text.text.clearfix').text.strip()
     data["place"] = place
 
-    img_tag = soup.find('img', {'src': True})
-    image_url = img_tag['src']
-    base_url = "https://yummyanime.tv"
-    full_image_url = base_url + image_url
-
-    target_dir ="img"
 
     new_filename = f"{data["name_ru"].replace("/","_")}.jpg"
-    
+    target_dir ="img"
     file_path = join(target_dir, new_filename)
-    image_response = requests.get(full_image_url)
+    if not exists(file_path):
+        img_tag = soup.find('img', {'src': True})
+        image_url = img_tag['src']
+        base_url = "https://yummyanime.tv"
+        full_image_url = base_url + image_url
+        image_response = requests.get(full_image_url)
 
-    with open(file_path, 'wb') as file:
-        file.write(image_response.content)
-    data["img"] = file_path
+        with open(file_path, 'wb') as file:
+            file.write(image_response.content)
+        data["img"] = file_path
 
     data["site"] = 1
     print(data["name_ru"],file_path)
@@ -126,7 +125,7 @@ def get_data(url):
     # Получаем список ссылок на аниме
     soup = BeautifulSoup(requests.get(url, headers=headers,proxies=proxies).text, "lxml")
     movie_items = soup.find_all('div', class_='movie-item')
-    links = [base_url + item.find('a')['href'] for item in movie_items[10:11]]
+    links = [base_url + item.find('a')['href'] for item in movie_items]
 
     # Проходим по каждой ссылке и сохраняем информацию
     data = list()
