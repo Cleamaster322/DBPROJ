@@ -67,10 +67,15 @@ def extract_info(soup,place):
 
     data["rating"] = soup.select_one('.card__rating-ext-count').text.strip()
     
-# Извлекаем количество голосов
+    # Извлекаем количество голосов
     value = soup.select_one('.card__meta').text.strip()
     data["views"] = int(value.replace(" ",""))
-# Извлекаем обложку
+
+     # Год выпуска
+
+    year_of_release = soup.find("div", class_="card__meta card__meta--move").text.strip().split(" ")
+    data["year_of_release"] = year_of_release[1]
+    # Извлекаем обложку
 
     new_filename = f"{data["name_ru"].replace("/","_").replace("?","")}.jpg"
     target_dir ="img/s2"
@@ -117,7 +122,7 @@ def get_data(url):
     main_element = soup.find("main")
     anime_links = main_element.find_all("a", class_="updli")
     # Извлекаем href из каждой ссылки
-    links = [link['href'] for link in anime_links[10:]]
+    links = [link['href'] for link in anime_links[49:50]]
     # Печатаем ссылки
     # Проходим по каждой ссылке и сохраняем информацию
     data = list()

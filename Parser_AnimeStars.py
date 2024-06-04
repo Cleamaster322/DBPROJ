@@ -1,6 +1,8 @@
 import os
 import requests
 from bs4 import BeautifulSoup
+from os.path import join, exists
+
 def save_html_to_file(url, filename):
     """
     Сохраняет HTML-код страницы в файл.
@@ -25,7 +27,7 @@ def parse_anime_page(page_url, output_dir,place):
         page_content = file.read()
 
     soup = BeautifulSoup(page_content, "lxml")
-    extract_info(soup,place)
+    return extract_info(soup,place)
 
 def extract_info(soup,place):
     """
@@ -35,46 +37,79 @@ def extract_info(soup,place):
 
     # Название Аниме
     header = soup.find("div", class_="page__header-one d-flex ai-center p-relative")
-    data["Name_ru"] = header.find("h1").get_text()
+    data["name_ru"] = header.find("h1").get_text()
+    data["name_eng"] = None
     
     # Название Категории
     header = soup.find("div", class_="page__meta flex-grow-1")
-    data["Category"] = [a.get_text() for a in header.find_all("a")]
+    data["genres"] = [a.get_text() for a in header.find_all("a")]
+    
+    # Статус
+    status = soup.find("div", class_="card__meta2")
+    data["status"] = status.get_text().replace("\n","")
 
-    #Год, Страна, Режиссер, Дата, Просмотров
+    # Год, Страна, Режиссер, Дата, Просмотров
     page_list = soup.find("ul", class_="page__list")
-    items = []
-    for li in page_list.find_all("li"):
-        if "Из серии" not in li.text and "Сезон" not in li.text :
-            value = (li.text.strip().split(":"))
-            data[value[0]] = value[1]
-            # print(data[value[0]])
+    for value in page_list.find_all("li"):
+        value = value.text.strip().split(":")
 
+        if value[0] == "Год":
+            key = "year_of_release"
+        elif value[0] == "Режиссер":
+            key = "director"
+        elif value[0] == "Просмотров":
+            key = "views"
+            value[1] = value[1].replace(" ","")
+        else:
+            continue
+        data[key] = value[1]
+    
+    # Описание
     descriptions = soup.find("div", class_ ="full-text p-relative")
-    data["Description"] = ""
-    
+    data["description"] = ""
+
     for desc in descriptions.find_all("p"):
-        data["Description"] += desc.text.strip()
-    # print(data["Name_ru"])
-    # print(data["Description"])
-
-    for i in data.keys():
-        print(i)
+        data["description"] += desc.text.strip()
     
-    # print(description.text.strip())
-    # values = soup.select('.inner-page__list li')
-    # print(data["Category"])
-    # print(data["Name_eng"])
+    # Номер сайта, и место аниме 
+    data["site"] = 3
+    data["place"] = place
 
-    # for value in values:
-    #     value = value.text.strip().split(": ")
-    #     data[value[0]] = value[1]
-    #     print(value[0],value[1])
+    # рейтинг
+    like = soup.find("div", class_="page__rating").text.strip().split("\n")
+    like = list(map(int,like))
+    data["rating"] = round((like[0] / (like[0] + like[1]) * 10), 1)
 
-    # data["Описание"] = soup.select_one('.inner-page__text.text.clearfix').text.strip()
-    # data["Место"] = place
-    # print(data["Описание"])
-    # print(data["Место"])    
+
+    # Извлекаем картинку если ее нет
+    new_filename = f"{data["name_ru"].replace("/","_").replace("?","")}.jpg"
+    target_dir ="img"
+    file_path = join(target_dir, new_filename)
+
+
+    if not exists(file_path):
+        img_div = soup.select_one('.page__poster')
+        img_tag = img_div.find('img', {'src': True})
+        image_url = img_tag['src']
+
+        base_url = "https://animestars.tv"
+        full_image_url = base_url + image_url
+
+        image_response = requests.get(full_image_url)
+
+        with open(file_path, 'wb') as file:
+            file.write(image_response.content)
+    else:
+    # Если файл существует, выводим сообщение
+        print(f"Файл {new_filename} уже существует")
+
+    data["img"] = file_path
+
+
+    return data
+    
+
+       
 
 def get_data(url):
     """
@@ -95,15 +130,12 @@ def get_data(url):
     articles = sect_content.find_all("article", class_="card has-expanded-link p-relative grid-item")
 
     # Извлекаем ссылки из тегов <a> внутри каждого article
-    links = [article.find("a", class_="card__link has-expanded-link__trg")['href'] for article in articles[4:5]]
+    links = [article.find("a", class_="card__link has-expanded-link__trg")['href'] for article in articles[0:1]]
     
     # Печатаем ссылки
-    print(links)
     # Проходим по каждой ссылке и сохраняем информацию
+    data = list()
     for i,link in enumerate(links):
-        parse_anime_page(link, "Data/s3",i+1)
+        data.append(parse_anime_page(link, "Data/s3",i+1))
+    return data
         
-
-if __name__ == "__main__":
-    get_data("https://animestars.tv/top100.html")
-    # extract_info()

@@ -20,6 +20,13 @@ class DatabaseManager:
         result = cursor.fetchall()
         cursor.close()
         return result
+    
+    def execute_update_query(self, query):
+        cursor = DatabaseManager.connection.cursor()
+        try:
+            cursor.execute(query)
+        except Exception as e:
+            print(f"Error updating data: {e}")
 
     def commit(self):
         DatabaseManager.connection.commit()

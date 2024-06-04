@@ -56,8 +56,6 @@ def extract_info(soup,place):
     #  keys = ["year_of_release","time","director","rating","genres","views","status","licensed","translation"]
     check = set(["Год выхода","Время","Режиссер","Рейтинг аниме","Жанр","Просмотров","Статус","Лицензировано","Перевод"])
     cur_tag =[value.text.strip().split(": ")[0] for value in values]
-
-
     for i,value in enumerate(values):
         value = value.text.strip().split(": ")
         if cur_tag[i] == "Год выхода":
@@ -128,7 +126,7 @@ def get_data(url):
     # Получаем список ссылок на аниме
     soup = BeautifulSoup(requests.get(url, headers=headers,proxies=proxies).text, "lxml")
     movie_items = soup.find_all('div', class_='movie-item')
-    links = [base_url + item.find('a')['href'] for item in movie_items]
+    links = [base_url + item.find('a')['href'] for item in movie_items[10:11]]
 
     # Проходим по каждой ссылке и сохраняем информацию
     data = list()

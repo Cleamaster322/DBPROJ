@@ -2,6 +2,7 @@ import mysql.connector
 
 import Parser_Yami as PY
 import Parser_AnimeGo as PAG
+import Parser_AnimeStars as PAS
 import DatabaseManager as DB
 
 def add_data_to_dataBase(db_manager, table_name, column_names, values):
@@ -19,8 +20,8 @@ def exists_in_dataBase(db_manager,table_name,column_name,value,data):
     query = f"SELECT COUNT(*) FROM {table_name} WHERE {column_name} = %s"
     value = (value,)
     if table_name =="anime":
-        query += f" and name_eng = %s"
-        value = (value[0],data["name_eng"])
+        query += f" and year_of_release = %s"
+        value = (value[0],data["year_of_release"])
     result = db_manager.execute_query(query, value)
     return bool(result[0][0])
 
@@ -30,13 +31,32 @@ def exists_relation_in_dataBase(db_manager,table_name,column_name,value1,value2)
     result = db_manager.execute_query(query, (value1,value2,))
     return bool(result[0][0])
 
+def update_exists_data(db_manager,data):
+    query = f"SELECT id FROM anime WHERE name_ru = %s and year_of_release = %s"
+    anime_id = db_manager.execute_query(query, (data["name_ru"],data["year_of_release"]))[0][0]
+
+    column_names = set(["name_ru","name_eng","year_of_release","description","director","rating","views","status","img","studio"]) & set(data)
+    update_statements =[]
+    for key in column_names:    
+        if data[key] == None:
+            value = "NULL"
+        elif type(data[key]) == str:
+            value = f"'{data[key]}'"
+        else:
+            value = data[key]
+    
+        update_statements.append(f"{key} = COALESCE({key}, {value})")
+    update_query = f"UPDATE anime SET {', '.join(update_statements)} WHERE id = {anime_id} AND ({' OR '.join([f'{key} IS NULL' for key in column_names])});"
+    db_manager.execute_update_query(update_query)
+    db_manager.commit()
 
 # Добавить данные в таблицу anime
 def add_to_anime(db_manager,data):
     column_names = set(["name_ru","name_eng","year_of_release","description","director","rating","views","status","img","studio"]) & set(data)
-    print(column_names)
     values = [data[name] for name in column_names]
-    if exists_in_dataBase(db_manager,"anime","name_ru",data["name_ru"],data):
+    print(exists_in_dataBase(db_manager,"anime","name_ru",data["name_ru"],data))
+    if exists_in_dataBase(db_manager,"anime","name_ru",data["name_ru"],data) !=0:
+        update_exists_data(db_manager,data)
         # print("Такое аниме уже есть", data["name_ru"])
         return
     add_data_to_dataBase(db_manager,"anime",column_names,values)
@@ -98,11 +118,31 @@ def add_data_to_tierList(db_manager,data):
 
 if __name__ == "__main__":
     db_manager = DB.DatabaseManager()
-    # dataset = PY.get_data("https://yummyanime.tv/2top-100/")
-    # for data in dataset:
-    #     if data == None:
-    #         continue
-    #     add_to_anime(db_manager,data)
+    dataset = PY.get_data("https://yummyanime.tv/2top-100/")
+    for data in dataset:
+        if data == None:
+            continue
+        add_to_anime(db_manager,data)
+        # add_generic_data(db_manager, "genre", ["name"], "genres", data["genres"],data)
+        # try:
+        #     add_generic_data(db_manager, "translation", ["name"], "translation", data["translation"],data)
+        # except:
+        #     pass
+        # try:
+        #     add_generic_data(db_manager, "licensed", ["name"], "licensed", data["licensed"],data)
+        # except:
+        #     pass
+        # add_data_to_tierList(db_manager,data)
+
+
+
+    dataset2 = PAG.get_data("https://animego.vip/top-100.html")
+    # print(dataset2[0])
+
+    for data in dataset2:
+        if data == None:
+            continue
+        add_to_anime(db_manager,data)
     #     add_generic_data(db_manager, "genre", ["name"], "genres", data["genres"],data)
     #     try:
     #         add_generic_data(db_manager, "translation", ["name"], "translation", data["translation"],data)
@@ -114,25 +154,23 @@ if __name__ == "__main__":
     #         pass
     #     add_data_to_tierList(db_manager,data)
 
-
-
-    dataset2 = PAG.get_data("https://animego.vip/top-100.html")
+    dataset3 = PAS.get_data("https://animestars.tv/top100.html")
     # print(dataset2[0])
 
-    for data in dataset2:
+    for data in dataset3:
         if data == None:
             continue
         add_to_anime(db_manager,data)
-        add_generic_data(db_manager, "genre", ["name"], "genres", data["genres"],data)
-        try:
-            add_generic_data(db_manager, "translation", ["name"], "translation", data["translation"],data)
-        except:
-            pass
-        try:
-            add_generic_data(db_manager, "licensed", ["name"], "licensed", data["licensed"],data)
-        except:
-            pass
-        add_data_to_tierList(db_manager,data)
+        # add_generic_data(db_manager, "genre", ["name"], "genres", data["genres"],data)
+        # try:
+        #     add_generic_data(db_manager, "translation", ["name"], "translation", data["translation"],data)
+        # except:
+        #     pass
+        # try:
+        #     add_generic_data(db_manager, "licensed", ["name"], "licensed", data["licensed"],data)
+        # except:
+        #     pass
+        # add_data_to_tierList(db_manager,data)
     db_manager.close_connection()
 
 
