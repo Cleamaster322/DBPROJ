@@ -32,6 +32,7 @@ CREATE TABLE `anime` (
   `rating` float DEFAULT NULL,
   `views` int DEFAULT NULL,
   `status` varchar(50) DEFAULT NULL,
+  `studio` varchar(100) DEFAULT NULL,
   `img` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -55,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-30 17:59:49
+-- Dump completed on 2024-06-04 13:28:44

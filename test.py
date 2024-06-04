@@ -1,6 +1,7 @@
 import mysql.connector
 
 import Parser_Yami as PY
+import Parser_AnimeGo as PAG
 import DatabaseManager as DB
 
 def add_data_to_dataBase(db_manager, table_name, column_names, values):
@@ -18,8 +19,8 @@ def exists_in_dataBase(db_manager,table_name,column_name,value,data):
     query = f"SELECT COUNT(*) FROM {table_name} WHERE {column_name} = %s"
     value = (value,)
     if table_name =="anime":
-        query += f" and year_of_release = %s"
-        value = (value[0],data["year_of_release"])
+        query += f" and name_eng = %s"
+        value = (value[0],data["name_eng"])
     result = db_manager.execute_query(query, value)
     return bool(result[0][0])
 
@@ -32,7 +33,8 @@ def exists_relation_in_dataBase(db_manager,table_name,column_name,value1,value2)
 
 # Добавить данные в таблицу anime
 def add_to_anime(db_manager,data):
-    column_names = set(["name_ru","name_eng","year_of_release","description","director","rating","views","status","img"]) & set(data)
+    column_names = set(["name_ru","name_eng","year_of_release","description","director","rating","views","status","img","studio"]) & set(data)
+    print(column_names)
     values = [data[name] for name in column_names]
     if exists_in_dataBase(db_manager,"anime","name_ru",data["name_ru"],data):
         # print("Такое аниме уже есть", data["name_ru"])
@@ -96,8 +98,28 @@ def add_data_to_tierList(db_manager,data):
 
 if __name__ == "__main__":
     db_manager = DB.DatabaseManager()
-    dataset = PY.get_data("https://yummyanime.tv/2top-100/")
-    for data in dataset:
+    # dataset = PY.get_data("https://yummyanime.tv/2top-100/")
+    # for data in dataset:
+    #     if data == None:
+    #         continue
+    #     add_to_anime(db_manager,data)
+    #     add_generic_data(db_manager, "genre", ["name"], "genres", data["genres"],data)
+    #     try:
+    #         add_generic_data(db_manager, "translation", ["name"], "translation", data["translation"],data)
+    #     except:
+    #         pass
+    #     try:
+    #         add_generic_data(db_manager, "licensed", ["name"], "licensed", data["licensed"],data)
+    #     except:
+    #         pass
+    #     add_data_to_tierList(db_manager,data)
+
+
+
+    dataset2 = PAG.get_data("https://animego.vip/top-100.html")
+    # print(dataset2[0])
+
+    for data in dataset2:
         if data == None:
             continue
         add_to_anime(db_manager,data)
@@ -112,4 +134,6 @@ if __name__ == "__main__":
             pass
         add_data_to_tierList(db_manager,data)
     db_manager.close_connection()
+
+
 
