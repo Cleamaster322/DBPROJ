@@ -83,7 +83,7 @@ def extract_info(soup,place):
 
     # Извлекаем картинку если ее нет
     new_filename = f"{data["name_ru"].replace("/","_").replace("?","")}.jpg"
-    target_dir ="img"
+    target_dir ="static/img"
     file_path = join(target_dir, new_filename)
 
 

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Аниме</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <a href="/" class="btn-back">Назад</a>
+    <form method="post" action="/tierlist">
+        <label for="sort">Сортировать по:</label>
+        <select name="sort" id="sort">
+            <option value="">Выберите опцию</option>
+            <option value="ratingSiteOne_asc">По рейтингу на сайте 1</option>
+            <option value="ratingSiteTwo_asc">По рейтингу на сайте 2</option>
+            <option value="ratingSiteThree_asc">По рейтингу на сайте 3</option>
+        </select>
+        <input type="submit" value="Отсортировать">
+    </form>
+    <div class="parent-flex_tierlist">
+        {% for row in data %}
+        <div class="flex-item_tierlist">
+                <div class="flex-item_tierlist_left">
+                    <a href="/details?id={{ row.id }}">
+                    <p>{{ row.name_ru }}</p>
+                    <img src="{{ row.img }}" alt="Image">
+                    </a>
+                </div>
+                <div class="flex-item_tierlist_right">
+                    <div class="name_site">
+                        <p>Место на Yummyanime.tv</p>
+                        {% if row.ratingSiteOne != 1000 %}
+                        <p>{{ row.ratingSiteOne }}</p>
+                        {% else %}
+                        <p>Неизвестно</p>
+                        {% endif %}
+                    </div>
+                    <div class="name_site">
+                        <p>Место на AnimeGo</p>
+                        {% if row.ratingSiteTwo != 1000  %}
+                        <p>{{ row.ratingSiteTwo }}</p>
+                        {% else %}
+                        <p>Неизвестно</p>
+                        {% endif %}
+                    </div>
+                    <div class="name_site">
+                        <p>Место на AnimeStars</p>
+                        {% if row.ratingSiteThree != 1000  %}
+                        <p>{{ row.ratingSiteThree }}</p>
+                        {% else %}
+                        <p>Неизвестно</p>
+                        {% endif %}
+                    </div>
+                </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

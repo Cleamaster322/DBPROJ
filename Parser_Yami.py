@@ -49,7 +49,7 @@ def extract_info(soup,place):
     data["name_ru"] = value.text.strip().replace(":",".")
 
     value = soup.select_one('.inner-page__subtitle')
-    data["name_eng"] = value.text.strip()
+    data["name_eng"] = value.text.strip().replace(":",".")
 
     values = soup.select('.inner-page__list li')
 
@@ -98,7 +98,7 @@ def extract_info(soup,place):
 
 
     new_filename = f"{data["name_ru"].replace("/","_")}.jpg"
-    target_dir ="img"
+    target_dir ="static/img"
     file_path = join(target_dir, new_filename)
     if not exists(file_path):
         img_tag = soup.find('img', {'src': True})
@@ -109,8 +109,8 @@ def extract_info(soup,place):
 
         with open(file_path, 'wb') as file:
             file.write(image_response.content)
-        data["img"] = file_path
 
+    data["img"] = file_path
     data["site"] = 1
     print(data["name_ru"],file_path)
     return data

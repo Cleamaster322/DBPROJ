@@ -1,0 +1,76 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+body{
+    margin: 0;
+}
+img{
+    height: 300px;
+    width: 200px;
+}
+.parent-flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Центрирование по горизонтали */
+    align-items: center; /* Центрирование по вертикали */
+    width: 100%; /* Убедитесь, что родительский контейнер занимает всю ширину */
+}
+
+.flex-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 100%; /* Изменено на 100%, чтобы элементы занимали всю ширину */
+    max-width: calc(30% - 2em); /* Максимальная ширина, чтобы ограничить ширину до 30% */
+    min-height: 400px;
+    margin: 1em 20px;
+    border: 2px blue solid;
+}
+.flex-item > p {
+    margin: 3px;
+    text-align: center;
+}
+.flex-item > a {
+    margin: 3px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.flex-item > a > p {
+    margin: 3px;
+    text-align: center;
+}
+
+.parent-flex_tierlist{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Центрирование по горизонтали */
+    align-items: flex-start; /* Центрирование по вертикали */
+    width: 100%; /* Убедитесь, что родительский контейнер занимает всю ширину */
+    flex-direction: column;
+}
+.flex-item_tierlist{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    padding: 0 5% 0 5%;
+    border: 2px blue solid;
+}
+.flex-item_tierlist_left{
+    width: 20%;
+}
+.flex-item_tierlist_right{
+    display: flex;
+    width: 70%;
+    justify-content: space-around;
+}
+
+.name_site{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}

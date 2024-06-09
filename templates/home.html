@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Аниме</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <form method="POST" action="/">
+        <label for="sort">Сортировать по:</label>
+        <select name="sort" id="sort">
+            <option value="views_desc">По просмотрам (убывающий)</option>
+            <option value="views_asc">По просмотрам (возрастающий)</option>
+            <option value="name_asc">По названию (A-Я)</option>
+            <option value="name_desc">По названию (Я-A)</option>
+            <option value="rating_asc">По рейтингу (возрастающий)</option>
+            <option value="rating_desc">По рейтингу (убывающий)</option>
+        </select>
+        <input type="submit" value="Отсортировать">
+    </form>
+    <a href="/tierlist">Перейти к рейтингу аниме на сайтах</a>
+    <div class="parent-flex">
+        {% for row in data %}
+            <div class="flex-item">
+                <a href="/details?id={{ row.id }}">
+                    <p>{{ row.name_ru }}</p>
+                    <p>{{ row.rating }}</p>
+                    <p>{{ row.views }}</p>
+                    <img src="{{ row.img }}" alt="Image">
+                    
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

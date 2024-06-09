@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Аниме</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <a href="/" class="btn-back">Назад</a>
+    <div class="parent-flex">
+        <div class="flex-item">
+            {% if data.name_ru %}
+            <h2 align="center">Название (русское): <span style="font-weight:normal;">{{ data.name_ru }}</span></h2>
+            {% endif %}
+
+            {% if data.name_eng %}
+            <h2 align="center">Оригинальное название: <span style="font-weight:normal;">{{ data.name_eng }}</span></h2>
+            {% endif %}
+
+            <img src="{{ data.img }}" alt="Image">
+
+            {% if data.year_of_release %}
+            <h2 align="center">Год выпуска:</h2>
+            <p>{{ data.year_of_release }}</p>
+            {% endif %}
+
+            {% if data.director %}
+            <h2 align="center">Режиссер:</h2>
+            <p>{{ data.director }}</p>
+            {% endif %}
+
+            {% if data.description %}
+            <h2 align="center">Описание:</h2>
+            <p>{{ data.description }}</p>
+            {% endif %}
+
+            {% if data.rating %}
+            <h2 align="center">Рейтинг:</h2>
+            <p>{{ data.rating }}</p>
+            {% endif %}
+
+            {% if data.views %}
+            <h2 align="center">Просмотры:</h2>
+            <p>{{ data.views }}</p>
+            {% endif %}
+
+            {% if data.status %}
+            <h2 align="center">Статус:</h2>
+            <p>{{ data.status }}</p>
+            {% endif %}
+
+            {% if data.studio %}
+            <h2 align="center">Студия:</h2>
+            <p>{{ data.studio }}</p>
+            {% endif %}
+
+            {% if genres %}
+            <h2 align="center">Жанры:</h2>
+            <p>{{ genres }}</p>
+            {% endif %}
+
+            {% if translations %}
+            <h2 align="center">Переводы:</h2>
+            <p>{{ translations }}</p>
+            {% endif %}
+
+            {% if licenses %}
+            <h2 align="center">Лицензированно:</h2>
+            <p>{{ licenses }}</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
