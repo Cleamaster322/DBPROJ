@@ -77,7 +77,7 @@ def extract_info(soup,place):
     data["year_of_release"] = year_of_release[1]
     # Извлекаем обложку
 
-    new_filename = f"{data["name_ru"].replace("/","_").replace("?","")}.jpg"
+    new_filename = f"{data['name_ru'].replace('/','_').replace('?','')}.jpg"
     target_dir ="static/img"
     file_path = join(target_dir, new_filename)
 

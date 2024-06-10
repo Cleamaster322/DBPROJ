@@ -97,7 +97,7 @@ def extract_info(soup,place):
     data["place"] = place
 
 
-    new_filename = f"{data["name_ru"].replace("/","_")}.jpg"
+    new_filename = f"{data['name_ru'].replace('/','_')}.jpg"
     target_dir ="static/img"
     file_path = join(target_dir, new_filename)
     if not exists(file_path):

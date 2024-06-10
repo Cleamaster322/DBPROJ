@@ -127,7 +127,7 @@ def update_tier_list(db_manager,data):
         numSite = "ratingSiteThree"
     anime_id = get_anime_id(db_manager,data)
     
-    update_query = f"UPDATE anime_tierlist SET {numSite} = COALESCE({numSite}, {data["place"]}) WHERE id = {anime_id} AND ({f'{numSite} IS NULL'});"
+    update_query = f"UPDATE anime_tierlist SET {numSite} = COALESCE({numSite},{data['place']}) WHERE id = {anime_id} AND ({f'{numSite} IS NULL'});"
     db_manager.execute_update_query(update_query)
     db_manager.commit()
 
